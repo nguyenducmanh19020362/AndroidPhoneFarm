@@ -234,7 +234,7 @@ namespace Code.ViewModels
             mutexThatBai.ReleaseMutex();
         }
 
-        private Mutex themDongChoBangMutex = new Mutex();
+        protected Mutex themDongChoBangMutex = new Mutex();
 
         protected virtual void ThucHienCongViecTrenThietBi(string idThietBi)
         {
