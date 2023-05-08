@@ -23,12 +23,17 @@ namespace Code.Utils.Story
 
     public class TakeLatestEmail : BaseScript
     {
-        private readonly string gmail = "com.google.android.gm";
-        private readonly ADBUtils adb;
-        private readonly Matcher matcher;
-        private readonly NodeHolder holder;
+        protected readonly string gmail = "com.google.android.gm";
 
-        public TakeLatestEmail(string deviceId, Matcher matcher, NodeHolder holder) : base()
+        protected static readonly Regex recentDate = new Regex("^[\\d]{1,2}:[\\d]{1,2} [ap]m$");
+        protected static readonly string recentDateFormat = "h:m tt";
+        protected static readonly string pastDateFormat = "MMM d";
+
+        protected readonly ADBUtils adb;
+        protected Matcher matcher;
+        protected readonly NodeHolder holder;
+
+        public TakeLatestEmail(string deviceId, NodeHolder holder = null, Matcher matcher = null) : base()
         {
             this.matcher = matcher;
             this.holder = holder;
@@ -59,7 +64,7 @@ namespace Code.Utils.Story
                 },
                 onCompleted = () =>
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(5000);
                 }
             };
             var clickMenu = new BaseScript()
@@ -105,8 +110,8 @@ namespace Code.Utils.Story
                 },
                 wait = () =>
                 {
-                    this.adb.swipe(100, 200, 500, 200);
-                    Thread.Sleep(1000);
+                    this.adb.swipe(200, 200, 200, 800);
+                    Thread.Sleep(2000);
                 },
             };
 
