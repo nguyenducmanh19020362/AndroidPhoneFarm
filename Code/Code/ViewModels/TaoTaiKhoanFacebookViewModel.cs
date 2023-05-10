@@ -26,7 +26,7 @@ namespace Code.ViewModels
         {
           
         }
-        protected override BaseScript createScriptToRun(string thietbiId)
+        protected override BaseScript createScriptToRun(string thietbiId, string url)
         {
             var prefix = RandomString(10);
             Random rnd = new Random();
@@ -39,6 +39,7 @@ namespace Code.ViewModels
             account.NgaySinh = rnd.Next(1, 28);
             account.ThangSinh = rnd.Next(0, 11);
             account.GioiTinh = rnd.Next(0, 2);
+
             return new TaoTaiKhoanFacebook(thietbiId, account);
         }
     }

@@ -1,4 +1,5 @@
-﻿using Code.Properties;
+﻿using AngleSharp.Dom;
+using Code.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Code.Utils.Story
 {
     internal class TaoTaiKhoanFacebook: BaseScript
     {
-        private readonly string facebook = "com.facebook.katana/.LoginActivity";
+        private readonly string facebook = "com.facebook.katana";
+        private readonly string login = "com.facebook.katana/.LoginActivity";
+
         private readonly TaiKhoanFacebook account;
         private readonly ADBUtils adb;
 
@@ -39,53 +43,53 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startLoginFacebook = new BaseScript()
+            var startFacebook = new BaseScript()
             {
                 action = () =>
                 {
-                    this.adb.startPackage(facebook);
+                    this.adb.startPackage(login);
                 },
                 onCompleted = () =>
                 {
                     Thread.Sleep(500);
                 }
             };
-
+            var logout = checkLogout();
             var clickCreateNewAccount = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Create new account";
-            }, 4);
+            }, 8);
 
 
             var clickGetStart = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Get started";
-            }, 4);
+            }, 8);
 
             var inputFirstName = inputText((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "First name";
-            }, 4, account.Ho);
+            }, 8, account.Ho);
 
             var inputLastName = inputText((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Last name";
-            }, 4, account.Ten);
+            }, 8, account.Ten);
 
             var clickNoneOfTheAbove = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "NONE OF THE ABOVE";
-            }, 4);
+            }, 8);
 
             var clickNext = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Next";
-            }, 4);
+            }, 8);
 
             var clickBirthdayInput = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Birthday";
-            }, 4);
+            }, 8);
 
             var setBirthdayInput = setBirthDay((XmlNode n) =>
             {
@@ -104,34 +108,35 @@ namespace Code.Utils.Story
             var clickGender = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Female";
-            }, 4);
+            }, 8);
 
             var clickSignUpWithEmail = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Sign up with email";
-            }, 4);
+            }, 8);
 
             var clickAllow = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "DENY";
-            }, 4);
+            }, 8);
 
             var inputEmail = inputInfo(account.TenDangNhap);
             var inputPass = inputInfo(account.MatKhau);
             var clickNotNow = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Not now";
-            }, 4);
+            }, 8);
             var clickIAgree = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "I agree";
-            }, 4);
+            }, 8);
 
             script.AddNext(stopAcivity
-                .AddNext(startLoginFacebook
+                .AddNext(startFacebook
+                .AddNext(logout
                 .AddNext(clickCreateNewAccount
                 .AddNext(clickGetStart
-                .AddNext(clickNoneOfTheAbove
+                //.AddNext(clickNoneOfTheAbove
                 .AddNext(inputFirstName
                 .AddNext(inputLastName
                 .AddNext(clickNext
@@ -147,8 +152,73 @@ namespace Code.Utils.Story
                 .AddNext(inputPass
                 .AddNext(clickNext
                 .AddNext(clickNotNow
-                .AddNext(clickIAgree)))))))))))))))))))));
+                .AddNext(clickIAgree))))))))))))))))))))
+                //)
+                );
             return script.RunScript();
+        }
+
+        private BaseScript checkLogout()
+        {
+            XmlNode node = null;
+            return new BaseScript(-1)
+            {
+                action = () =>
+                {
+                    var screen = this.adb.getCurrentView();
+                    var needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
+                    {
+                        return n.Attributes["text"].InnerText == "Create new account";
+                    }));
+                    node = needView.FirstOrDefault();
+                    if (node == null)
+                    {
+                        screen = this.adb.getCurrentView();
+                        needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
+                        {
+                            return n.Attributes["selected"].InnerText == "true";
+                        }));
+                        node = needView.FirstOrDefault();
+                        if (node != null)
+                        {
+                            var b = Bound.ofXMLNode(node);
+                            var x = 1000;
+                            var y = b.y + b.w / 2;
+                            adb.tap(x, y);
+                        }
+                        Thread.Sleep(1000);
+                        adb.swipe(100, 1000, 100, 100);
+                        Thread.Sleep(1000);
+                        screen = this.adb.getCurrentView();
+                        needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
+                        {
+                            return n.Attributes["content-desc"].InnerText == "Log out";
+                        }));
+                        node = needView.FirstOrDefault();
+                        if (node != null)
+                        {
+                            var b = Bound.ofXMLNode(node);
+                            var x = b.x + b.h / 2;
+                            var y = b.y + b.w / 2;
+                            adb.tap(x, y);
+                        }
+
+                        screen = this.adb.getCurrentView();
+                        needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
+                        {
+                            return n.Attributes["text"].InnerText == "LOG OUT";
+                        }));
+                        node = needView.FirstOrDefault();
+                        if (node != null)
+                        {
+                            var b = Bound.ofXMLNode(node);
+                            var x = b.x + b.h / 2;
+                            var y = b.y + b.w / 2;
+                            adb.tap(x, y);
+                        }
+                    }
+                }
+            };
         }
 
         private BaseScript inputInfo(string text)
@@ -166,14 +236,12 @@ namespace Code.Utils.Story
 
         private BaseScript inputText(Matcher matcher, double maxWait, string text, int clickNumber = 1)
         {
-            DateTime startTime = DateTime.UtcNow;
             XmlNode node = null;
             return new BaseScript(-1)
             {
                 init = () =>
                 {
                     Thread.Sleep(1000);
-                    startTime = DateTime.UtcNow;
                 },
                 canAction = () =>
                 {
@@ -181,10 +249,6 @@ namespace Code.Utils.Story
                     var needView = ViewUtils.findNode(screen, matcher);
                     node = needView.FirstOrDefault();
                     return needView.Count != 0;
-                },
-                wait = () =>
-                {
-                    Thread.Sleep(200);
                 },
                 action = () =>
                 {
@@ -198,12 +262,6 @@ namespace Code.Utils.Story
                         adb.typeText(text);
                         Thread.Sleep(1000);
                     }
-                },
-                isError = () =>
-                {
-                    var t = System.DateTime.UtcNow - startTime;
-                    Console.WriteLine(t.TotalSeconds);
-                    return t.TotalSeconds > maxWait;
                 }
             };
         }
