@@ -103,9 +103,9 @@ namespace Code.ViewModels
             }
             foreach (var ac in DataProvider.Ins.db.TaiKhoanGoogles)
             {
-                if (tbs.Contains(ac.IDThietBi))
+                if (tbs.Contains(ac.IDThietBi.Trim()))
                 {
-                    emailOfDevice[ac.IDThietBi].Add(ac.TenDangNhap);
+                    emailOfDevice[ac.IDThietBi.Trim()].Add(ac.TenDangNhap);
                 }
             }
             base.QuanLyCongViecChoCacThietBi(thietbi, soLanLap);

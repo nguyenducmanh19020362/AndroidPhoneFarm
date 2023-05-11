@@ -18,6 +18,8 @@ namespace Code.Utils.Story
 
         private bool matchEmail(string email)
         {
+            //accountEmail = accountEmail.Trim();
+
             return email.StartsWith(accountEmail)
                 && ((email.Length == accountEmail.Length) 
                     || (email.Length > accountEmail.Length && email[accountEmail.Length] == '@'));
@@ -134,7 +136,7 @@ namespace Code.Utils.Story
                 if (isTrue)
                 {
                     var prev = n.PreviousSibling;
-                    isTrue = matchEmail(prev.Attributes["text"].InnerText);
+                    isTrue = matchEmail(prev.Attributes["text"].InnerText.Trim());
                 }
 
                 return isTrue;
