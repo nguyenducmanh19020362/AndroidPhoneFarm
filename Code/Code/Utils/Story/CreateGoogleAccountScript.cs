@@ -2,6 +2,7 @@
 using Code.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,10 +29,31 @@ namespace Code.Utils.Story
             this.adb = new ADBUtils(deviceId);
         }
 
-        public override bool RunScript()
+        protected override void OnCompleted()
         {
-            var script = new BaseScript();
-            var stopAcivity = new BaseScript()
+            account.TrangThai = AccountStatus.CREATED;
+            DataProvider.Ins.db.TaiKhoanGoogles.AddOrUpdate(this.account);
+            DataProvider.Ins.db.SaveChanges();
+        }
+
+        protected override void Init()
+        {
+            account.TrangThai = AccountStatus.CREATING;
+            DataProvider.Ins.db.TaiKhoanGoogles.AddOrUpdate(this.account);
+            DataProvider.Ins.db.SaveChanges();
+        }
+
+        protected override void OnFailed()
+        {
+            account.TrangThai = AccountStatus.FAILED;
+            DataProvider.Ins.db.TaiKhoanGoogles.AddOrUpdate(this.account);
+            DataProvider.Ins.db.SaveChanges();
+        }
+
+        protected override bool IsCompleted()
+        {
+            var script = new BaseScriptComponent();
+            var stopAcivity = new BaseScriptComponent()
             {
                 action = () =>
                 {
@@ -43,7 +65,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startSetting = new BaseScript()
+            var startSetting = new BaseScriptComponent()
             {
                 action = () =>
                 {
@@ -137,9 +159,9 @@ namespace Code.Utils.Story
             return script.RunScript();
         }
 
-        private BaseScript addAccount()
+        private BaseScriptComponent addAccount()
         {
-            return new BaseScript(-1)
+            return new BaseScriptComponent(-1)
             {
                 action = () =>
                 {
@@ -148,11 +170,11 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScript scrollNotWaitAndClick(Matcher matcher)
+        private BaseScriptComponent scrollNotWaitAndClick(Matcher matcher)
         {
             XmlNode node = null;
             DateTime startTime = DateTime.UtcNow;
-            return new BaseScript(-1)
+            return new BaseScriptComponent(-1)
             {
                 init = () =>
                 {
@@ -181,11 +203,11 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScript clickSkipOrException()
+        private BaseScriptComponent clickSkipOrException()
         {
             DateTime startTime = DateTime.UtcNow;
             XmlNode node = null;
-            return new BaseScript(-1)
+            return new BaseScriptComponent(-1)
             {
                 init = () =>
                 {
@@ -222,10 +244,10 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScript importPasswordAndClick()
+        private BaseScriptComponent importPasswordAndClick()
         {
             DateTime startTime = DateTime.UtcNow;
-            return new BaseScript(-1)
+            return new BaseScriptComponent(-1)
             {
                 init = () =>
                 {
@@ -253,11 +275,11 @@ namespace Code.Utils.Story
                 }
             };
         }
-        private BaseScript importUserNameAndClick(Matcher matcher)
+        private BaseScriptComponent importUserNameAndClick(Matcher matcher)
         {
             DateTime startTime = DateTime.UtcNow;
             XmlNode node= null;
-            return new BaseScript(-1)
+            return new BaseScriptComponent(-1)
             {
                 init = () =>
                 {
@@ -306,10 +328,10 @@ namespace Code.Utils.Story
                 }
             };
         }
-        private BaseScript importInforAndClick()
+        private BaseScriptComponent importInforAndClick()
         {
             DateTime startTime = DateTime.UtcNow;
-            return new BaseScript(-1)
+            return new BaseScriptComponent(-1)
             {
                 init = () =>
                 {
@@ -363,10 +385,10 @@ namespace Code.Utils.Story
                 }
             };
         }
-        private BaseScript importNameAndClick()
+        private BaseScriptComponent importNameAndClick()
         {
             DateTime startTime = DateTime.UtcNow;
-            return new BaseScript(-1)
+            return new BaseScriptComponent(-1)
             {
                
                 init = () =>
@@ -399,10 +421,10 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScript scrollAndClick(Matcher matcher, int maxTry)
+        private BaseScriptComponent scrollAndClick(Matcher matcher, int maxTry)
         {
             XmlNode node = null;
-            return new BaseScript(maxTry)
+            return new BaseScriptComponent(maxTry)
             {
                 canAction = () =>
                 {
@@ -430,11 +452,11 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScript waitAndClick(Matcher matcher, double maxWait, int clickNumber = 1)
+        private BaseScriptComponent waitAndClick(Matcher matcher, double maxWait, int clickNumber = 1)
         {
             DateTime startTime = DateTime.UtcNow;
             XmlNode node = null;
-            return new BaseScript(-1)
+            return new BaseScriptComponent(-1)
             {
                 init = () =>
                 {

@@ -38,12 +38,14 @@ namespace Code.Utils.Story
             this.matcher = matcher;
             this.holder = holder;
             this.adb = new ADBUtils(deviceId);
-            this.action = Action;
         }
-
-        private void Action()
+        protected override bool IsCompleted()
         {
-            var stopGmail = new BaseScript()
+            return holder.node != null;
+        }
+        protected override void Init()
+        {
+            var stopGmail = new BaseScriptComponent()
             {
                 action = () =>
                 {
@@ -55,7 +57,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startGmail = new BaseScript()
+            var startGmail = new BaseScriptComponent()
             {
                 action = () =>
                 {
@@ -67,7 +69,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(5000);
                 }
             };
-            var clickMenu = new BaseScript()
+            var clickMenu = new BaseScriptComponent()
             {
                 action = () =>
                 {
@@ -79,7 +81,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(1000);
                 }
             };
-            var showAllMail = new BaseScript()
+            var showAllMail = new BaseScriptComponent()
             {
                 action = () =>
                 {
@@ -94,7 +96,7 @@ namespace Code.Utils.Story
 
             XmlNode node = null;
 
-            var takeMail = new BaseScript(10)
+            var takeMail = new BaseScriptComponent(10)
             {
                 canAction = () =>
                 {

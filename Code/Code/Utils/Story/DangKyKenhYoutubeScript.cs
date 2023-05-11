@@ -24,10 +24,10 @@ namespace Code.Utils.Story
             this.url = url;
             this.adb = new ADBUtils(deviceId);
         }
-        public override bool RunScript()
+        protected override bool IsCompleted()
         {
-            var script = new BaseScript();
-            var stopAcivity = new BaseScript()
+            var script = new BaseScriptComponent();
+            var stopAcivity = new BaseScriptComponent()
             {
                 action = () =>
                 {
@@ -38,7 +38,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startYoutubeChannel = new BaseScript()
+            var startYoutubeChannel = new BaseScriptComponent()
             {
                 action = () =>
                 {
@@ -50,7 +50,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startYoutube= new BaseScript()
+            var startYoutube= new BaseScriptComponent()
             {
                 action = () =>
                 {
@@ -62,7 +62,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var clickSubrice = new BaseScript()
+            var clickSubrice = new BaseScriptComponent()
             {
                 canAction = () =>
                 {
@@ -95,9 +95,9 @@ namespace Code.Utils.Story
             return script.RunScript();
         }
 
-        private BaseScript switchAccountGoogle()
+        private BaseScriptComponent switchAccountGoogle()
         {
-            return new BaseScript()
+            return new BaseScriptComponent()
             {
                 init = () =>
                 {
