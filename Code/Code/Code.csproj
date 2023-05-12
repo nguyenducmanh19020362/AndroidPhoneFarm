@@ -153,6 +153,7 @@
     <Compile Include="Utils\Story\BaseScript.cs" />
     <Compile Include="Utils\Story\CreateGoogleAccountScript.cs" />
     <Compile Include="Utils\Story\DangKyKenhYoutubeScript.cs" />
+    <Compile Include="Utils\Story\SwitchToYoutubeAccountByEmail.cs" />
     <Compile Include="Utils\Story\TakeFacebookCode.cs" />
     <Compile Include="Utils\Story\TakeLatestEmail.cs" />
     <Compile Include="Utils\Story\TaoTaiKhoanFacebook.cs" />

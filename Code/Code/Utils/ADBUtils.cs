@@ -18,7 +18,7 @@ namespace Code.Utils
 
         private readonly bool throwExceptionOnError;
 
-        public ADBUtils(string deviceId, bool throwExceptionOnError = true)
+        public ADBUtils(string deviceId, bool throwExceptionOnError = false)
         {
             this.deviceId = deviceId;
             this.throwExceptionOnError = throwExceptionOnError;

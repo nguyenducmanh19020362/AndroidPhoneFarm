@@ -109,7 +109,7 @@ namespace Code.Utils.Story
                 return n.Attributes["text"].InnerText == "Create your own Gmail address";
             });
             var importPasswordAndChooseNext = importPasswordAndClick();
-            var clickSkip = clickSkipOrException();
+            var clickPhoneNumber = clickSkipOrException();
             var scrollClickSkip = scrollNotWaitAndClick(new Matcher((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Skip";
@@ -123,7 +123,6 @@ namespace Code.Utils.Story
             {
                 return n.Attributes["text"].InnerText == "I agree";
             }));
-            var addAccountToDB = addAccount();
             script.AddNext(
                 stopAcivity.AddNext(
                     startSetting.AddNext(
@@ -136,7 +135,7 @@ namespace Code.Utils.Story
                                                 importInforAndChooseNext.AddNext(
                                                     importUserNameAndChooseNext.AddNext(
                                                         importPasswordAndChooseNext.AddNext(
-                                                            clickSkip.AddNext(
+                                                            clickPhoneNumber.AddNext(
                                                                 scrollClickSkip.AddNext(
                                                                     clickNext.AddNext(
                                                                         clickAgree
@@ -158,18 +157,6 @@ namespace Code.Utils.Story
 
             return script.RunScript();
         }
-
-        private BaseScriptComponent addAccount()
-        {
-            return new BaseScriptComponent(-1)
-            {
-                action = () =>
-                {
-                    DataProvider.Ins.db.TaiKhoanGoogles.Add(account);
-                }
-            };
-        }
-
         private BaseScriptComponent scrollNotWaitAndClick(Matcher matcher)
         {
             XmlNode node = null;
@@ -181,12 +168,16 @@ namespace Code.Utils.Story
                     Thread.Sleep(1000);
                     startTime = DateTime.UtcNow;
                 },
-                action = () =>
+                canAction = () =>
                 {
                     this.adb.swipe(100, 1400, 100, 100);
                     var screen = this.adb.getCurrentView();
                     var needView = ViewUtils.findNode(screen, matcher);
                     node = needView.FirstOrDefault();
+                    return node != null;
+                },
+                action = () =>
+                {
                     if (node != null)
                     {
                         var b = Bound.ofXMLNode(node);
@@ -218,22 +209,24 @@ namespace Code.Utils.Story
                 {
                     Thread.Sleep(1000);
                 },
-                action = () =>
+                canAction = () =>
                 {
                     var screen = this.adb.getCurrentView();
                     var needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
                     {
                         return n.Attributes["text"].InnerText == "Next";
                     }));
-                    if (needView.Count > 0)
-                    {
-                        node = needView.FirstOrDefault();
-                        var b = Bound.ofXMLNode(node);
-                        var x = b.x + b.h / 2;
-                        var y = b.y + b.w / 2;
-                        adb.tap(x, y);
-                        Thread.Sleep(5000);
-                    }
+                    node = needView.FirstOrDefault();
+                    return node != null;
+                }
+                ,
+                action = () =>
+                {
+                    var b = Bound.ofXMLNode(node);
+                    var x = b.x + b.h / 2;
+                    var y = b.y + b.w / 2;
+                    adb.tap(x, y);
+                    Thread.Sleep(5000);
                 },
                 isError = () =>
                 {
@@ -348,7 +341,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(1000);
                     adb.enterEvent();
                     int tabNum = account.ThangSinh;
-                    for (int i = 0; i < tabNum; i++)
+                    for (int i = 1; i < tabNum; i++)
                     {
                         adb.tabEvent();
                         Thread.Sleep(200);

@@ -65,7 +65,7 @@ namespace Code.Models
             account.MatKhau = "Abc13579@!";
             account.NamSinh = 2000 + rnd.Next(-10, 10);
             account.NgaySinh = rnd.Next(1, 28);
-            account.ThangSinh = rnd.Next(0, 11);
+            account.ThangSinh = rnd.Next(1, 12);
             account.GioiTinh = rnd.Next(0, 2);
             account.IDThietBi = deviceId;
             account.TrangThai = AccountStatus.PENDING;
@@ -102,7 +102,7 @@ namespace Code.Models
             account.MatKhau = "Abc13579@!";
             account.NamSinh = 2000 + rnd.Next(-10, 10);
             account.NgaySinh = rnd.Next(1, 28);
-            account.ThangSinh = rnd.Next(0, 11);
+            account.ThangSinh = rnd.Next(1, 12);
             account.GioiTinh = rnd.Next(0, 2);
             account.IDThietBi = deviceId;
             account.TrangThai = AccountStatus.PENDING;
