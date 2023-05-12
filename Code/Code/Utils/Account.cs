@@ -97,7 +97,7 @@ namespace Code.Models
             Random rnd = new Random();
             var account = new TaiKhoanFacebook();
             account.Ten = arrTen[rnd.Next(0, arrTen.Length - 1)];
-            account.TenDangNhap = String.Format("{0}{1}", prefix, rnd.Next(1, 1000));
+            account.TenDangNhap = gAccount.TenDangNhap + "@gmail.com";
             account.Ho = arrHo[rnd.Next(0, arrHo.Length - 1)];
             account.MatKhau = "Abc13579@!";
             account.NamSinh = 2000 + rnd.Next(-10, 10);

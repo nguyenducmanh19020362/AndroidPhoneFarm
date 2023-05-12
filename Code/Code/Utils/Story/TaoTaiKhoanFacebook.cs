@@ -42,14 +42,14 @@ namespace Code.Utils.Story
         {
             account.TrangThai = AccountStatus.CREATING;
             DataProvider.Ins.db.TaiKhoanFacebooks.AddOrUpdate(this.account);
-            DataProvider.Ins.db.SaveChanges();
+            //DataProvider.Ins.db.SaveChanges();
         }
 
         protected override void OnFailed()
         {
             account.TrangThai = AccountStatus.FAILED;
             DataProvider.Ins.db.TaiKhoanFacebooks.AddOrUpdate(this.account);
-            DataProvider.Ins.db.SaveChanges();
+            //DataProvider.Ins.db.SaveChanges();
         }
         
         protected override bool IsCompleted()
@@ -104,7 +104,24 @@ namespace Code.Utils.Story
                 return n.Attributes["text"].InnerText == "NONE OF THE ABOVE";
             }, 8);
 
-            var clickNext = waitAndClick((XmlNode n) =>
+            var clickNext1 = waitAndClick((XmlNode n) =>
+            {
+                return n.Attributes["text"].InnerText == "Next";
+            }, 8);
+
+            var clickNext2 = waitAndClick((XmlNode n) =>
+            {
+                return n.Attributes["text"].InnerText == "Next";
+            }, 8);
+            var clickNext3 = waitAndClick((XmlNode n) =>
+            {
+                return n.Attributes["text"].InnerText == "Next";
+            }, 8);
+            var clickNext4 = waitAndClick((XmlNode n) =>
+            {
+                return n.Attributes["text"].InnerText == "Next";
+            }, 8);
+            var clickNext5 = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Next";
             }, 8);
@@ -112,7 +129,7 @@ namespace Code.Utils.Story
             var clickBirthdayInput = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Birthday";
-            }, 8);
+            }, 8); ;
 
             var setBirthdayInput = setBirthDay((XmlNode n) =>
             {
@@ -159,24 +176,26 @@ namespace Code.Utils.Story
                 .AddNext(logout
                 .AddNext(clickCreateNewAccount
                 .AddNext(clickGetStart
-                //.AddNext(clickNoneOfTheAbove
+                //chỗ này comment lại
+                .AddNext(clickNoneOfTheAbove
                 .AddNext(inputFirstName
                 .AddNext(inputLastName
-                .AddNext(clickNext
+                .AddNext(clickNext1
                 .AddNext(clickBirthdayInput
                 .AddNext(setBirthdayInput
-                .AddNext(clickNext
+                .AddNext(clickNext2
                 .AddNext(clickGender
-                .AddNext(clickNext
+                .AddNext(clickNext3
                 .AddNext(clickAllow
                 .AddNext(clickSignUpWithEmail
                 .AddNext(inputEmail
-                .AddNext(clickNext
+                .AddNext(clickNext4
                 .AddNext(inputPass
-                .AddNext(clickNext
+                .AddNext(clickNext5
                 .AddNext(clickNotNow
                 .AddNext(clickIAgree))))))))))))))))))))
-                //)
+                //comment ngoặc kép
+                )
                 );
             return script.RunScript();
         }
@@ -189,6 +208,7 @@ namespace Code.Utils.Story
                 action = () =>
                 {
                     var screen = this.adb.getCurrentView();
+                    Console.WriteLine(screen);
                     var needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
                     {
                         return n.Attributes["text"].InnerText == "Create new account";
@@ -281,7 +301,7 @@ namespace Code.Utils.Story
                     while (clickNumber-- != 0)
                     {
                         adb.tap(x, y);
-                        Thread.Sleep(500);
+                        Thread.Sleep(1000);
                         adb.typeText(text);
                         Thread.Sleep(1000);
                     }
@@ -304,7 +324,6 @@ namespace Code.Utils.Story
                 {
                     var screen = this.adb.getCurrentView();
                     var needView = ViewUtils.findNode(screen, matcher);
-                    Console.WriteLine(needView.Count);
                     node = needView.FirstOrDefault();
                     return needView.Count != 0;
                 },
@@ -327,7 +346,6 @@ namespace Code.Utils.Story
                 isError = () =>
                 {
                     var t = System.DateTime.UtcNow - startTime;
-                    Console.WriteLine(t.TotalSeconds);
                     return t.TotalSeconds > maxWait;
                 }
             };
