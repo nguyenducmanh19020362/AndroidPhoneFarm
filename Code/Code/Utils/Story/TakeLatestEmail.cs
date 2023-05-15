@@ -41,10 +41,7 @@ namespace Code.Utils.Story
         }
         protected override bool IsCompleted()
         {
-            return holder.node != null;
-        }
-        protected override void Init()
-        {
+        
             var stopGmail = new BaseScriptComponent()
             {
                 action = () =>
@@ -78,7 +75,7 @@ namespace Code.Utils.Story
                 },
                 onCompleted = () =>
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(3000);
                 }
             };
             var showAllMail = new BaseScriptComponent()
@@ -117,16 +114,18 @@ namespace Code.Utils.Story
                 },
             };
 
-            this.AddNext(
-                stopGmail.AddNext(
-                    startGmail.AddNext(
-                        clickMenu.AddNext(
-                            showAllMail.AddNext(
-                                takeMail)
-                            )
+
+            stopGmail.AddNext(
+                startGmail.AddNext(
+                    clickMenu.AddNext(
+                        showAllMail.AddNext(
+                            takeMail)
                         )
                     )
                 );
+            stopGmail.RunScript();
+                
+            return holder.node != null;
         }
     }
 }

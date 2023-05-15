@@ -42,18 +42,20 @@ namespace Code.Utils.Story
         {
             account.TrangThai = AccountStatus.CREATING;
             DataProvider.Ins.db.TaiKhoanFacebooks.AddOrUpdate(this.account);
-            //DataProvider.Ins.db.SaveChanges();
+            DataProvider.Ins.db.SaveChanges();
         }
 
         protected override void OnFailed()
         {
             account.TrangThai = AccountStatus.FAILED;
             DataProvider.Ins.db.TaiKhoanFacebooks.AddOrUpdate(this.account);
-            //DataProvider.Ins.db.SaveChanges();
+            DataProvider.Ins.db.SaveChanges();
         }
         
         protected override bool IsCompleted()
         {
+            NodeHolder nodeHolder = new NodeHolder();
+            var scriptGetCodeFacebook = new TakeFacebookCode(account.IDThietBi, nodeHolder);
             var script = new BaseScriptComponent();
             var stopAcivity = new BaseScriptComponent()
             {
@@ -170,6 +172,7 @@ namespace Code.Utils.Story
             {
                 return n.Attributes["text"].InnerText == "I agree";
             }, 8);
+            
 
             script.AddNext(stopAcivity
                 .AddNext(startFacebook
@@ -195,9 +198,24 @@ namespace Code.Utils.Story
                 .AddNext(clickNotNow
                 .AddNext(clickIAgree))))))))))))))))))))
                 //comment ngoặc kép
-                )
-                );
-            return script.RunScript();
+                ));
+            var isTrue = false;
+            if (script.RunScript())
+            {
+                Thread.Sleep(5000);
+                if (scriptGetCodeFacebook.RunScript())
+                {
+                    var codeFacebook = TakeFacebookCode.GetCode(nodeHolder.node);
+                    Console.WriteLine(codeFacebook);
+                    var inputCode = inputInfo(codeFacebook);
+                    var newScript = new BaseScriptComponent();
+                    newScript.AddNext(
+                        startFacebook.AddNext(inputCode)
+                        );
+                    isTrue = newScript.RunScript();
+                }
+            }
+            return isTrue;
         }
 
         private BaseScriptComponent checkLogout()
@@ -207,57 +225,88 @@ namespace Code.Utils.Story
             {
                 action = () =>
                 {
+                    Thread.Sleep(5000);
                     var screen = this.adb.getCurrentView();
-                    Console.WriteLine(screen);
                     var needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
-                    {
-                        return n.Attributes["text"].InnerText == "Create new account";
-                    }));
+                        {
+                            return n.Attributes["text"].InnerText == "Enter the confirmation code";
+                        }
+                    ));
                     node = needView.FirstOrDefault();
-                    if (node == null)
+                    if (node != null)
                     {
+                        adb.tap(40, 90);
+                        Thread.Sleep(3000);
                         screen = this.adb.getCurrentView();
                         needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
                         {
-                            return n.Attributes["selected"].InnerText == "true";
-                        }));
-                        node = needView.FirstOrDefault();
-                        if (node != null)
-                        {
-                            var b = Bound.ofXMLNode(node);
-                            var x = 1000;
-                            var y = b.y + b.w / 2;
-                            adb.tap(x, y);
+                            return n.Attributes["text"].InnerText == "LEAVE";
                         }
-                        Thread.Sleep(1000);
-                        adb.swipe(100, 1000, 100, 100);
-                        Thread.Sleep(1000);
-                        screen = this.adb.getCurrentView();
-                        needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
-                        {
-                            return n.Attributes["content-desc"].InnerText == "Log out";
-                        }));
+                        ));
                         node = needView.FirstOrDefault();
                         if (node != null)
                         {
+                            Console.WriteLine("ok");
                             var b = Bound.ofXMLNode(node);
                             var x = b.x + b.h / 2;
                             var y = b.y + b.w / 2;
                             adb.tap(x, y);
                         }
+                    }
+                    else
+                    {
+                        needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
+                        {
+                            return n.Attributes["text"].InnerText == "Create new account";
+                        }));
+                        node = needView.FirstOrDefault();
+                        if (node == null)
+                        {
+                            screen = this.adb.getCurrentView();
+                            needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
+                            {
+                                return n.Attributes["selected"].InnerText == "true";
+                            }));
+                            node = needView.FirstOrDefault();
+                            if (node != null)
+                            {
+                                var b = Bound.ofXMLNode(node);
+                                /*var x = 1000;
+                                var y = b.y + b.w / 2;*/
+                                var x = 710;
+                                var y = 160;
+                                adb.tap(x, y);
+                            }
+                            Thread.Sleep(1000);
+                            adb.swipe(100, 1000, 100, 100);
+                            Thread.Sleep(1000);
+                            screen = this.adb.getCurrentView();
+                            needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
+                            {
+                                return n.Attributes["content-desc"].InnerText == "Log out";
+                            }));
+                            node = needView.FirstOrDefault();
+                            if (node != null)
+                            {
+                                var b = Bound.ofXMLNode(node);
+                                var x = b.x + b.h / 2;
+                                var y = b.y + b.w / 2;
+                                adb.tap(x, y);
+                            }
 
-                        screen = this.adb.getCurrentView();
-                        needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
-                        {
-                            return n.Attributes["text"].InnerText == "LOG OUT";
-                        }));
-                        node = needView.FirstOrDefault();
-                        if (node != null)
-                        {
-                            var b = Bound.ofXMLNode(node);
-                            var x = b.x + b.h / 2;
-                            var y = b.y + b.w / 2;
-                            adb.tap(x, y);
+                            screen = this.adb.getCurrentView();
+                            needView = ViewUtils.findNode(screen, new Matcher((XmlNode n) =>
+                            {
+                                return n.Attributes["text"].InnerText == "LOG OUT";
+                            }));
+                            node = needView.FirstOrDefault();
+                            if (node != null)
+                            {
+                                var b = Bound.ofXMLNode(node);
+                                var x = b.x + b.h / 2;
+                                var y = b.y + b.w / 2;
+                                adb.tap(x, y);
+                            }
                         }
                     }
                 }

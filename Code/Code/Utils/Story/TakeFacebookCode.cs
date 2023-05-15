@@ -17,7 +17,7 @@ namespace Code.Utils.Story
 {
     public class TakeFacebookCode : TakeLatestEmail
     {
-        private static readonly Regex facebookConfirmCode = new Regex("^[\\d]+ is your Facebook confirmation code$");
+        private static readonly Regex facebookConfirmCode = new Regex("^[\\d]+ is your Facebook confirmation code");
         private readonly DateTime now;
 
         public TakeFacebookCode(string deviceId, NodeHolder holder) : base(deviceId, holder: holder)
@@ -39,6 +39,7 @@ namespace Code.Utils.Story
             if (isTrue)
             {
                 isTrue = node.ChildNodes[1].Attributes["text"].InnerText == "Facebook";
+                Console.WriteLine(isTrue);
             }
 
             string text = "";
@@ -60,7 +61,6 @@ namespace Code.Utils.Story
                 text = node.ChildNodes[3].Attributes["text"].InnerText;
                 isTrue = facebookConfirmCode.IsMatch(text);
             }
-
             return isTrue;
         }
 
