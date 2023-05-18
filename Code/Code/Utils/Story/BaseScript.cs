@@ -7,21 +7,26 @@ using System.Windows.Documents;
 
 namespace Code.Utils.Story
 {
+
+    public delegate void OnTitleChange(string title);
+
     public class BaseScript
     {
         protected int tryCounter;
+        private string title;
 
-        public BaseScript(int maxTry = 1)
+        public BaseScript(int maxTry = 1, string title = null)
         {
             this.tryCounter = maxTry;
+            this.title = title;
         }
 
         public virtual bool RunScript()
         {
+            this.ChangeTitle(this.title);
             Init();
             bool canAction = false;
-            bool isError = false;
-            while (!(isError = IsError()) && !(canAction = CanAction()))
+            while (!IsError() && !(canAction = CanAction()))
             {
                 Wait();
                 if (--tryCounter == 0)
@@ -29,7 +34,7 @@ namespace Code.Utils.Story
                     break;
                 }
             }
-            if (!isError && canAction)
+            if (canAction)
             {
                 Action();
                 if (IsCompleted())
@@ -117,9 +122,20 @@ namespace Code.Utils.Story
             }
             if (index != this._candidates.Count)
             {
+                this._scripts[index].onTitleChange = this.onTitleChange;
                 return this._scripts[index].RunScript();
             }
             else return this._candidates.Count == 0;
+        }
+
+        public OnTitleChange onTitleChange = (title) => {};
+
+        protected void ChangeTitle(string t)
+        {
+            if (t != null)
+            {
+                this.onTitleChange.Invoke(t);
+            }
         }
     }
 }

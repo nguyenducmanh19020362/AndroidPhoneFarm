@@ -53,7 +53,7 @@ namespace Code.Utils.Story
         protected override bool IsCompleted()
         {
             var script = new BaseScriptComponent();
-            var stopAcivity = new BaseScriptComponent()
+            var stopAcivity = new BaseScriptComponent("Tắt cài đặt")
             {
                 action = () =>
                 {
@@ -65,7 +65,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startSetting = new BaseScriptComponent()
+            var startSetting = new BaseScriptComponent("Mở cài đặt")
             {
                 action = () =>
                 {
@@ -95,7 +95,7 @@ namespace Code.Utils.Story
             var waitAndChooseCreateAccount = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Create account";
-            }, 10);
+            }, 10, title: "Thêm tài khoản google");
 
             var waitAndChooseCreateAccountForMyself = waitAndClick((XmlNode n) =>
             {
@@ -109,7 +109,7 @@ namespace Code.Utils.Story
                 return n.Attributes["text"].InnerText == "Create your own Gmail address";
             });
             var importPasswordAndChooseNext = importPasswordAndClick();
-            var clickPhoneNumber = clickSkipOrException();
+            var clickPhoneNumber = clickSkipOrException("Bỏ nhập số điện thoại");
             var scrollClickSkip = scrollNotWaitAndClick(new Matcher((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Skip";
@@ -122,7 +122,7 @@ namespace Code.Utils.Story
             var clickAgree = scrollNotWaitAndClick(new Matcher((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "I agree";
-            }));
+            }), "Đồng ý điều khoản Google");
             script.AddNext(
                 stopAcivity.AddNext(
                     startSetting.AddNext(
@@ -155,13 +155,14 @@ namespace Code.Utils.Story
                     )
                 );
 
+            script.onTitleChange = this.onTitleChange;
             return script.RunScript();
         }
-        private BaseScriptComponent scrollNotWaitAndClick(Matcher matcher)
+        private BaseScriptComponent scrollNotWaitAndClick(Matcher matcher, string title = null)
         {
             XmlNode node = null;
             DateTime startTime = DateTime.UtcNow;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent(title, -1)
             {
                 init = () =>
                 {
@@ -194,11 +195,11 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScriptComponent clickSkipOrException()
+        private BaseScriptComponent clickSkipOrException(string title = null)
         {
             DateTime startTime = DateTime.UtcNow;
             XmlNode node = null;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent(title, -1)
             {
                 init = () =>
                 {
@@ -240,7 +241,7 @@ namespace Code.Utils.Story
         private BaseScriptComponent importPasswordAndClick()
         {
             DateTime startTime = DateTime.UtcNow;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent("Nhập mật khẩu", -1)
             {
                 init = () =>
                 {
@@ -272,7 +273,7 @@ namespace Code.Utils.Story
         {
             DateTime startTime = DateTime.UtcNow;
             XmlNode node= null;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent("Nhập tên email", -1)
             {
                 init = () =>
                 {
@@ -324,7 +325,7 @@ namespace Code.Utils.Story
         private BaseScriptComponent importInforAndClick()
         {
             DateTime startTime = DateTime.UtcNow;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent("Nhập thông tin cá nhân khác", -1)
             {
                 init = () =>
                 {
@@ -381,7 +382,7 @@ namespace Code.Utils.Story
         private BaseScriptComponent importNameAndClick()
         {
             DateTime startTime = DateTime.UtcNow;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent("Nhập họ và tên", -1)
             {
                
                 init = () =>
@@ -414,10 +415,10 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScriptComponent scrollAndClick(Matcher matcher, int maxTry)
+        private BaseScriptComponent scrollAndClick(Matcher matcher, int maxTry, string title = null)
         {
             XmlNode node = null;
-            return new BaseScriptComponent(maxTry)
+            return new BaseScriptComponent(title, maxTry)
             {
                 canAction = () =>
                 {
@@ -445,11 +446,11 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScriptComponent waitAndClick(Matcher matcher, double maxWait, int clickNumber = 1)
+        private BaseScriptComponent waitAndClick(Matcher matcher, double maxWait, int clickNumber = 1, string title = null)
         {
             DateTime startTime = DateTime.UtcNow;
             XmlNode node = null;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent(title, -1)
             {
                 init = () =>
                 {

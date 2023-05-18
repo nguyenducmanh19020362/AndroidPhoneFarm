@@ -34,7 +34,7 @@ namespace Code.Utils.Story
         protected override void Action()
         {
             var script = new BaseScriptComponent();
-            var stopAcivity = new BaseScriptComponent()
+            var stopAcivity = new BaseScriptComponent("Dừng Youtube")
             {
                 action = () =>
                 {
@@ -45,7 +45,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startYoutube = new BaseScriptComponent()
+            var startYoutube = new BaseScriptComponent("Mở Youtube")
             {
                 action = () =>
                 {
@@ -63,7 +63,7 @@ namespace Code.Utils.Story
             var openAccount = WaitAndClick(matcher: (node) =>
             {
                 return node.Attributes["resource-id"].InnerText == "com.google.android.youtube:id/account_container";
-            });
+            }, "Thay đổi tài khoản");
             var takeAccount = ScrollAndChangeAccount();
 
             script.AddNext(
@@ -73,6 +73,7 @@ namespace Code.Utils.Story
                             openAccount.AddNext(
                                 takeAccount)))));
 
+            script.onTitleChange = this.onTitleChange;
             isDone = script.RunScript();
         }
 
@@ -81,11 +82,11 @@ namespace Code.Utils.Story
             return isDone;
         }
 
-        private BaseScriptComponent WaitAndClick(Matcher matcher, int time = 10)
+        private BaseScriptComponent WaitAndClick(Matcher matcher, string title = null, int time = 10)
         {
             XmlNode node = null;
             DateTime startTime = DateTime.UtcNow;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent(title, -1)
             {
                 init = () =>
                 {
@@ -147,7 +148,7 @@ namespace Code.Utils.Story
                 return n.Attributes["resource-id"].InnerText == "com.google.android.youtube:id/account_list";
             };
 
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent("Tìm kiếm tài khoản", -1)
             {
                 init = () =>
                 {
@@ -187,6 +188,7 @@ namespace Code.Utils.Story
                 onCompleted = () =>
                 {
                     Thread.Sleep(1000);
+                    this.ChangeTitle("Đổi tài khoản thành công");
                 }
             };
         }

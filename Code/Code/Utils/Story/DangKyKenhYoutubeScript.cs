@@ -32,7 +32,7 @@ namespace Code.Utils.Story
         {
             var script = new SwitchToYoutubeAccountByEmail(adb, account);
 
-            var stopAcivity = new BaseScriptComponent()
+            var stopAcivity = new BaseScriptComponent("Dừng Youtube")
             {
                 action = () =>
                 {
@@ -43,7 +43,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startYoutubeChannel = new BaseScriptComponent()
+            var startYoutubeChannel = new BaseScriptComponent("Mở Youtube")
             {
                 action = () =>
                 {
@@ -55,7 +55,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var clickSubrice = new BaseScriptComponent()
+            var clickSubrice = new BaseScriptComponent("Click đăng ký kênh")
             {
                 canAction = () =>
                 {
@@ -75,6 +75,10 @@ namespace Code.Utils.Story
                     var y = b.y + b.w / 2;
                     adb.tap(x, y);
                     Thread.Sleep(2000);
+                },
+                onFailed = () =>
+                {
+                    this.ChangeTitle("Kênh đã được đăng ký");
                 }
             };
 
@@ -83,6 +87,7 @@ namespace Code.Utils.Story
                     startYoutubeChannel.AddNext(
                         clickSubrice)));
 
+            script.onTitleChange = onTitleChange;
             isDone = script.RunScript();
         }
 

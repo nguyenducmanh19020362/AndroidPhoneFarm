@@ -57,7 +57,7 @@ namespace Code.Utils.Story
             NodeHolder nodeHolder = new NodeHolder();
             var scriptGetCodeFacebook = new TakeFacebookCode(account.IDThietBi, nodeHolder);
             var script = new BaseScriptComponent();
-            var stopAcivity = new BaseScriptComponent()
+            var stopAcivity = new BaseScriptComponent("Dừng facebook")
             {
                 action = () =>
                 {
@@ -68,7 +68,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startFacebook = new BaseScriptComponent()
+            var startFacebook = new BaseScriptComponent("Mở facebook")
             {
                 action = () =>
                 {
@@ -83,7 +83,7 @@ namespace Code.Utils.Story
             var clickCreateNewAccount = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Create new account";
-            }, 8);
+            }, 8, "Tạo mới tài khoản Facebook");
 
 
             var clickGetStart = waitAndClick((XmlNode n) =>
@@ -94,12 +94,12 @@ namespace Code.Utils.Story
             var inputFirstName = inputText((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "First name";
-            }, 8, account.Ho);
+            }, 8, account.Ho, "Nhập họ");
 
             var inputLastName = inputText((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Last name";
-            }, 8, account.Ten);
+            }, 8, account.Ten, "Nhập tên");
 
             var clickNoneOfTheAbove = waitAndClick((XmlNode n) =>
             {
@@ -150,20 +150,20 @@ namespace Code.Utils.Story
             var clickGender = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Female";
-            }, 8);
+            }, 8, "Chọn giới tính");
 
             var clickSignUpWithEmail = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Sign up with email";
-            }, 8);
+            }, 8, "Chọn đăng nhập bằng email");
 
             var clickAllow = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "DENY";
             }, 8);
 
-            var inputEmail = inputInfo(account.TenDangNhap);
-            var inputPass = inputInfo(account.MatKhau);
+            var inputEmail = inputInfo(account.TenDangNhap, "Nhập tên tài khoản");
+            var inputPass = inputInfo(account.MatKhau, "Nhập mật khẩu");
             var clickNotNow = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "Not now";
@@ -171,7 +171,7 @@ namespace Code.Utils.Story
             var clickIAgree = waitAndClick((XmlNode n) =>
             {
                 return n.Attributes["text"].InnerText == "I agree";
-            }, 8);
+            }, 8, "Chấp nhận điều khoản Facebook");
             
 
             script.AddNext(stopAcivity
@@ -200,9 +200,11 @@ namespace Code.Utils.Story
                 //comment ngoặc kép
                 ));
             var isTrue = false;
+            script.onTitleChange = onTitleChange;
             if (script.RunScript())
             {
                 Thread.Sleep(5000);
+                scriptGetCodeFacebook.onTitleChange = onTitleChange;
                 if (scriptGetCodeFacebook.RunScript())
                 {
                     var codeFacebook = TakeFacebookCode.GetCode(nodeHolder.node);
@@ -212,6 +214,7 @@ namespace Code.Utils.Story
                     newScript.AddNext(
                         startFacebook.AddNext(inputCode)
                         );
+                    newScript.onTitleChange = onTitleChange;
                     isTrue = newScript.RunScript();
                 }
             }
@@ -313,9 +316,9 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScriptComponent inputInfo(string text)
+        private BaseScriptComponent inputInfo(string text, string title = null)
         {
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent(title, -1)
             {
 
                 action = () =>
@@ -326,10 +329,10 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScriptComponent inputText(Matcher matcher, double maxWait, string text, int clickNumber = 1)
+        private BaseScriptComponent inputText(Matcher matcher, double maxWait, string text, string title = null, int clickNumber = 1)
         {
             XmlNode node = null;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent(title, -1)
             {
                 init = () =>
                 {
@@ -358,11 +361,11 @@ namespace Code.Utils.Story
             };
         }
 
-        private BaseScriptComponent waitAndClick(Matcher matcher, double maxWait, int clickNumber = 1)
+        private BaseScriptComponent waitAndClick(Matcher matcher, double maxWait, string title = null, int clickNumber = 1)
         {
             DateTime startTime = DateTime.UtcNow;
             XmlNode node = null;
-            return new BaseScriptComponent(-1)
+            return new BaseScriptComponent(title, -1)
             {
                 init = () =>
                 {
@@ -408,7 +411,7 @@ namespace Code.Utils.Story
             var ySetButton = 0;
             var xNumber = 0;
             var yNumber = 0;
-            return new BaseScriptComponent(maxTry)
+            return new BaseScriptComponent("Thiết lập ngày sinh", maxTry)
             {
                 init = () =>
                 {

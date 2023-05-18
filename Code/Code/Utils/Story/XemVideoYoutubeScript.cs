@@ -26,7 +26,7 @@ namespace Code.Utils.Story
         protected override bool IsCompleted()
         {
             var script = new BaseScriptComponent();
-            var stopAcivity = new BaseScriptComponent()
+            var stopAcivity = new BaseScriptComponent("Dừng Youtube")
             {
                 action = () =>
                 {
@@ -37,7 +37,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startYoutube = new BaseScriptComponent()
+            var startYoutube = new BaseScriptComponent("Mở Youtube")
             {
                 action = () =>
                 {
@@ -49,7 +49,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var skipAdv = new BaseScriptComponent()
+            var skipAdv = new BaseScriptComponent("Kiểm tra quảng cáo và skip")
             {
                 init = () =>
                 {
@@ -90,7 +90,7 @@ namespace Code.Utils.Story
                     }
                 }
             };
-            var wait = new BaseScriptComponent()
+            var wait = new BaseScriptComponent("Xem video")
             {
                 init = () =>
                 {
@@ -108,6 +108,8 @@ namespace Code.Utils.Story
                         )
                     )
                 );
+
+            script.onTitleChange = this.onTitleChange;
             return script.RunScript();
         }
     }

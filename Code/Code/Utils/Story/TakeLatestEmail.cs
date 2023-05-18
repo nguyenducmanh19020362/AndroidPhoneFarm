@@ -42,7 +42,7 @@ namespace Code.Utils.Story
         protected override bool IsCompleted()
         {
         
-            var stopGmail = new BaseScriptComponent()
+            var stopGmail = new BaseScriptComponent("Dừng ứng dụng Gmail")
             {
                 action = () =>
                 {
@@ -54,7 +54,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(500);
                 }
             };
-            var startGmail = new BaseScriptComponent()
+            var startGmail = new BaseScriptComponent("Mở ứng dụng Gmail")
             {
                 action = () =>
                 {
@@ -66,7 +66,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(5000);
                 }
             };
-            var clickMenu = new BaseScriptComponent()
+            var clickMenu = new BaseScriptComponent("Chọn Menu")
             {
                 action = () =>
                 {
@@ -78,7 +78,7 @@ namespace Code.Utils.Story
                     Thread.Sleep(3000);
                 }
             };
-            var showAllMail = new BaseScriptComponent()
+            var showAllMail = new BaseScriptComponent("Chọn xem tất cả email")
             {
                 action = () =>
                 {
@@ -93,7 +93,7 @@ namespace Code.Utils.Story
 
             XmlNode node = null;
 
-            var takeMail = new BaseScriptComponent(10)
+            var takeMail = new BaseScriptComponent("Tìm kiếm email", 10)
             {
                 canAction = () =>
                 {
@@ -123,6 +123,8 @@ namespace Code.Utils.Story
                         )
                     )
                 );
+
+            stopGmail.onTitleChange = this.onTitleChange;
             stopGmail.RunScript();
                 
             return holder.node != null;

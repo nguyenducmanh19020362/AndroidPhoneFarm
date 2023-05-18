@@ -46,7 +46,7 @@ namespace Code.ViewModels
             public class TrangThai
             {
                 protected readonly string name;
-                protected TrangThai(string name)
+                public TrangThai(string name)
                 {
                     this.name = name;
                 }
@@ -300,6 +300,11 @@ namespace Code.ViewModels
             themDongChoBangMutex.ReleaseMutex();
             try
             {
+                job.onTitleChange = (title) =>
+                {
+                    status.Status = new DeviceStatus.TrangThai(title);
+                };
+
                 if (job.RunScript())
                 {
                     status.Status = DeviceStatus.TrangThai.THANH_CONG;

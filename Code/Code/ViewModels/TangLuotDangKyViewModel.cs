@@ -103,7 +103,7 @@ namespace Code.ViewModels
             }
             foreach (var ac in DataProvider.Ins.db.TaiKhoanGoogles)
             {
-                if (tbs.Contains(ac.IDThietBi.Trim()))
+                if (tbs.Contains(ac.IDThietBi.Trim()) && ac.TrangThai == AccountStatus.CREATED)
                 {
                     emailOfDevice[ac.IDThietBi.Trim()].Add(ac.TenDangNhap);
                 }

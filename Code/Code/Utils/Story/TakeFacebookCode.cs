@@ -64,5 +64,10 @@ namespace Code.Utils.Story
             return isTrue;
         }
 
+        protected override void OnCompleted()
+        {
+            base.OnCompleted();
+            ChangeTitle("Lấy thành công mã Facebook");
+        }
     }
 }

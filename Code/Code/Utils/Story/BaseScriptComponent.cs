@@ -20,6 +20,7 @@ namespace Code.Utils.Story
     public class BaseScriptComponent : BaseScript
     {
         public BaseScriptComponent(int maxTry = 1) : base(maxTry) { }
+        public BaseScriptComponent(string title, int maxTry = 1) : base(maxTry, title) { }
 
         public Init init = () => { };
 
