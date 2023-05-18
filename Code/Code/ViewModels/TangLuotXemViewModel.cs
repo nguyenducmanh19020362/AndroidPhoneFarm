@@ -1,9 +1,13 @@
-﻿using Code.Utils.Story;
+﻿using AngleSharp.Html;
+using Code.Models;
+using Code.Utils.Story;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -33,6 +37,8 @@ namespace Code.ViewModels
         private string _tieuDe;
         private string _thoiLuong;
         private string _soLuotXem;
+
+        public ObservableCollection<JobProgress> JobProgress = new ObservableCollection<JobProgress>();
 
         public string DuongDan
         {
@@ -105,16 +111,16 @@ namespace Code.ViewModels
             ThoiGianXem = ThoiGianXemToiThieu;
             SoLuotCanTang = 5;
         }
-        protected override bool ThucHienCongViecTrenThietBi(string idThietBi, string u)
+        protected override bool ThucHienCongViecTrenThietBi(string idThietBi, string u, int ind)
         {
-            var r = base.ThucHienCongViecTrenThietBi(idThietBi, u);
+            var r = base.ThucHienCongViecTrenThietBi(idThietBi, u, ind);
             TrangThai = this.ThanhCong.ToString();
             return r;
         }
-        protected override void QuanLyCongViecChoCacThietBi(List<string> thietbi, long soLanLap)
+        protected override void QuanLyCongViecChoCacThietBi(List<string> thietbi, long soLanLap, int ind)
         {
             soLanLap = SoLuotCanTang;
-            base.QuanLyCongViecChoCacThietBi(thietbi, soLanLap);
+            base.QuanLyCongViecChoCacThietBi(thietbi, soLanLap, ind);
         }
         protected override void ExecuteShowPopUpWindow(object obj)
         {
@@ -160,6 +166,25 @@ namespace Code.ViewModels
         protected override string getCurrentUrl()
         {
             return DuongDan;
+        }
+
+        protected override void ExecuteStopAction(object obj)
+        {
+            base.ExecuteStopAction(obj);
+            this.JobProgress.Clear();
+        }
+
+        protected override void ThemCongViec(List<string> thietbi)
+        {
+            this.JobProgress.Add(new JobProgress(0, this._soLuotCanTang, this._duongDan));
+            base.ThemCongViec(thietbi);
+        }
+
+
+        protected override void TangThanhCong(int threadIndex)
+        {
+            base.TangThanhCong(threadIndex);
+            this.JobProgress[threadIndex].HT++;
         }
     }
 }

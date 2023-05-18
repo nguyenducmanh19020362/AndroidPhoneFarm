@@ -1,4 +1,5 @@
-﻿using Code.Properties;
+﻿using AngleSharp.Dom;
+using Code.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Code.Utils.Story
         private readonly string youtube = "com.google.android.youtube";
         private readonly string url;
         private readonly int thoiGianXem;
+        private bool isDone = false;
 
         public XemVideoYoutubeScript(string deviceId, string url, int thoiGianXem) : base()
         {
@@ -23,7 +25,161 @@ namespace Code.Utils.Story
             this.thoiGianXem = thoiGianXem;
             this.adb = new ADBUtils(deviceId);
         }
+
+        protected override void Action()
+        {
+            var script = new BaseScriptComponent();
+            script.onTitleChange = onTitleChange;
+            var stopAcivity = new BaseScriptComponent("Dừng Youtube")
+            {
+                action = () =>
+                {
+                    adb.stopPackage(youtube);
+                },
+                onCompleted = () =>
+                {
+                    Thread.Sleep(500);
+                }
+            };
+            var startYoutube = new BaseScriptComponent("Mở Youtube")
+            {
+                action = () =>
+                {
+                    adb.startIntent(intent, url);
+                    Thread.Sleep(500);
+                },
+                onCompleted = () =>
+                {
+                    Thread.Sleep(10 * 1000);
+                }
+            };
+            string view = "";          
+
+            int watchedTime = 0;
+            XmlNode adsCountdown = null;
+            XmlNode adsSkip = null;
+
+            var onAdsCountdown = new BaseScriptComponent("Đợi quảng cáo kết thúc")
+            {
+                action = () =>
+                {
+                    var time = adsCountdown.Attributes["content-desc"].InnerText.Split(' ').FirstOrDefault();
+                    if (int.TryParse(time, out int delay))
+                    {
+                        Thread.Sleep(delay * 1000);
+                    }
+                },
+                onCompleted = () =>
+                {
+                    view = adb.getCurrentView();
+                }
+            };
+
+            var skipAds = new BaseScriptComponent("Bỏ qua quảng cáo")
+            {
+                action = () =>
+                {
+                    var b = Bound.ofXMLNode(adsSkip);
+                    var x = b.x + b.h / 2;
+                    var y = b.y + b.w / 2;
+                    adb.tap(x, y);
+                },
+                onCompleted = () =>
+                {
+                    view = adb.getCurrentView();
+                },
+            };
+
+            var rand = new Random();
+
+            var watchVideo = new BaseScriptComponent("Xem video")
+            {
+                action = () =>
+                {
+                    var seconds = rand.Next(10) + 20;
+                    seconds = Math.Min(seconds, this.thoiGianXem - watchedTime + 1);
+                    Thread.Sleep(seconds * 1000);
+                    watchedTime += seconds;
+                },
+                onCompleted = () =>
+                {
+                    view = adb.getCurrentView();
+                }
+            };
+
+            var done = new BaseScriptComponent();
+
+            Candidate hasAdsCountdown = () =>
+            {
+                adsCountdown = ViewUtils.findNode(view, (node) =>
+                {
+                    return "com.google.android.youtube:id/countdown_text" == node.Attributes["resource-id"].InnerText;
+                }).FirstOrDefault();
+                return adsCountdown != null;
+            };
+
+            Candidate hasAdsSkipButton = () =>
+            {
+                adsSkip = ViewUtils.findNode(view, (node) =>
+                {
+                    return "com.google.android.youtube:id/skip_ad_button" == node.Attributes["resource-id"].InnerText;
+                }).FirstOrDefault();
+                return adsSkip != null;
+            };
+
+            Candidate hasPlayVideo = () =>
+            {
+                var v = ViewUtils.findNode(view, (node) =>
+                {
+                    return "com.google.android.youtube:id/fullscreen_button" == node.Attributes["resource-id"].InnerText;
+                }).FirstOrDefault();
+                return v != null;
+            };
+
+            var waitForYoutubeStart = new BaseScriptComponent("Đợi Youtube khởi động", -1)
+            {
+                init = () =>
+                {
+                    Thread.Sleep(500);
+                },
+                action = () =>
+                {
+                    view = adb.getCurrentView();
+                },
+            };
+
+            waitForYoutubeStart.AddNext(watchVideo, hasPlayVideo);
+            waitForYoutubeStart.AddNext(onAdsCountdown, hasAdsCountdown);
+            waitForYoutubeStart.AddNext(skipAds, hasAdsSkipButton);
+            waitForYoutubeStart.AddNext(waitForYoutubeStart);
+
+            var watchAction = new BaseScriptComponent();
+            watchAction.AddNext(done, () =>
+            {
+                return watchedTime >= this.thoiGianXem;
+            });
+            watchAction.AddNext(onAdsCountdown, hasAdsCountdown);
+            watchAction.AddNext(skipAds, hasAdsSkipButton);
+            watchAction.AddNext(watchVideo);
+
+            onAdsCountdown.AddNext(skipAds, hasAdsSkipButton);
+            onAdsCountdown.AddNext(onAdsCountdown, hasAdsCountdown);
+            onAdsCountdown.AddNext(watchVideo);
+
+            watchVideo.AddNext(onAdsCountdown, hasAdsCountdown);
+            watchVideo.AddNext(skipAds, hasAdsSkipButton);
+            watchVideo.AddNext(watchAction);
+
+            script.AddNext(stopAcivity.AddNext(startYoutube.AddNext(waitForYoutubeStart.AddNext(watchAction))));
+
+            isDone = script.RunScript();
+        }
+
         protected override bool IsCompleted()
+        {
+            return isDone;
+        }
+        private bool Old()
         {
             var script = new BaseScriptComponent();
             var stopAcivity = new BaseScriptComponent("Dừng Youtube")

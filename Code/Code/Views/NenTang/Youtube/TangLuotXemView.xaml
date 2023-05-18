@@ -111,14 +111,34 @@
                              Grid.Row="2"
                              Width="300"
                              Height="30"/>
-                    <TextBlock Text="{Binding TrangThai}" Grid.Column="1"
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" VerticalContentAlignment="Center"
+                                  Width="300" Grid.Column="1" Grid.Row="3">
+                        <ItemsControl x:Name="JobProgress">
+                            <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="2" Background="Yellow" Height="Auto" ToolTip="{Binding Title}" VerticalAlignment="Center" >
+                                        <TextBlock Text="{Binding HT}" Foreground="Black" Padding="2"/>
+                                        <TextBlock Text="/" Foreground="Aqua"  Padding="2"/>
+                                        <TextBlock Text="{Binding TS}" Foreground="Red"  Padding="2"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" CanHorizontallyScroll="True">
+                                </StackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    <!--<TextBlock Text="{Binding TrangThai}" Grid.Column="1"
                              Grid.Row="3"
                                    Foreground="{StaticResource titleColor2}"
                                    FontSize="14"
                                Width="300"
                              Height="30"
                                    FontFamily="Moutserrat"
-                                   FontWeight="Medium" />
+                                   FontWeight="Medium" />-->
+                    </ScrollViewer>
                 </Grid>
                 <Grid>
                     <Grid.RowDefinitions>

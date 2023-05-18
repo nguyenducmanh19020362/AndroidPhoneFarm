@@ -93,7 +93,7 @@ namespace Code.ViewModels
             GetInformation = new ViewModelCommand(ExecuteGetInformation);
             SoLuotTang = 2;
         }
-        protected override void QuanLyCongViecChoCacThietBi(List<string> thietbi, long soLanLap)
+        protected override void QuanLyCongViecChoCacThietBi(List<string> thietbi, long soLanLap, int ind)
         {
             soLanLap = SoLuotTang;
             var tbs = thietbi.ToHashSet();
@@ -108,7 +108,7 @@ namespace Code.ViewModels
                     emailOfDevice[ac.IDThietBi.Trim()].Add(ac.TenDangNhap);
                 }
             }
-            base.QuanLyCongViecChoCacThietBi(thietbi, soLanLap);
+            base.QuanLyCongViecChoCacThietBi(thietbi, soLanLap, ind);
         }
         protected override void ExecuteShowPopUpWindow(object obj)
         {

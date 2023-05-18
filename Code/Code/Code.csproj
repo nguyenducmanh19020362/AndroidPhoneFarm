@@ -139,6 +139,7 @@
       <DependentUpon>Model.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\DataProvider.cs" />
+    <Compile Include="Models\JobProgress.cs" />
     <Compile Include="Utils\Account.cs" />
     <Compile Include="Models\ThietBi.cs" />
     <Compile Include="Models\ThongTinTaiKhoan.cs" />

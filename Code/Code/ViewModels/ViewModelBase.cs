@@ -114,14 +114,10 @@ namespace Code.ViewModels
         protected List<Thread> threads = new List<Thread>();
         public ObservableCollection<DeviceStatus> devices = new ObservableCollection<DeviceStatus>();
         protected Dispatcher mainDispatcher = Dispatcher.CurrentDispatcher;
+        protected List<int> soLanDaLapCV = new List<int>();
 
         public ICommand ShowPopUpWindowCommand { get; }
         public ICommand StopAction { get; }
-
-        protected virtual long LaySoLanLapCongViec()
-        {
-            return long.MaxValue;
-        }
 
         protected ViewModelBase()
         {
@@ -139,10 +135,12 @@ namespace Code.ViewModels
                 this.thietBi.setUse(tb, true);
                 this.ThietBiDuocDung.Add(tb);
             }
+            var index = this.threads.Count;
             var thread = new Thread(new ThreadStart(() =>
             {
-                QuanLyCongViecChoCacThietBi(thietbi,0);
+                QuanLyCongViecChoCacThietBi(thietbi,long.MaxValue, index);
             }));
+            soLanDaLapCV.Add(0);
             thread.Start();
             this.threads.Add(thread);
         }
@@ -167,8 +165,9 @@ namespace Code.ViewModels
             }
             ThietBiDuocDung = new List<string>();
             this.threads = new List<Thread>();
+            this.soLanDaLapCV.Clear();
         }
-        protected virtual void QuanLyCongViecChoCacThietBi(List<string> thietbi, long soLanLap)
+        protected virtual void QuanLyCongViecChoCacThietBi(List<string> thietbi, long soLanLap, int indexInGThreads)
         {
             List<Thread> jobThreads = new List<Thread>();
             foreach (var tb in thietbi)
@@ -179,8 +178,7 @@ namespace Code.ViewModels
             {
                 var url = getCurrentUrl().ToString();
                 int nextIndex = 0;
-                soLanLap = soLanLap == 0 ? LaySoLanLapCongViec() + _thanhCong : soLanLap + _thanhCong;
-                while (_thanhCong < soLanLap)
+                while (soLanDaLapCV[indexInGThreads] < soLanLap)
                 {
                     if (nextIndex != -1)
                     {
@@ -195,7 +193,7 @@ namespace Code.ViewModels
                         jobThreads[nextIndex] = new Thread(new ThreadStart(() =>
                         {
                             var tb = thietbi[nextIndex];
-                            if (!ThucHienCongViecTrenThietBi(tb, url))
+                            if (!ThucHienCongViecTrenThietBi(tb, url, indexInGThreads))
                             {
                                 var ind = thietbi.IndexOf(tb);
                                 thietBi.setUse(tb, false);
@@ -259,15 +257,16 @@ namespace Code.ViewModels
         }
 
         Mutex mutexThanhCong = new Mutex();
-        protected void TangThanhCong()
+        protected virtual void TangThanhCong(int threadIndex)
         {
             mutexThanhCong.WaitOne();
+            soLanDaLapCV[threadIndex]++;
             ++ThanhCong;
             mutexThanhCong.ReleaseMutex();
         }
 
         Mutex mutexThatBai = new Mutex();
-        protected void TangThatBai()
+        protected virtual void TangThatBai(int threadIndex)
         {
             mutexThatBai.WaitOne();
             ++ThatBai;
@@ -276,7 +275,7 @@ namespace Code.ViewModels
 
         private Mutex themDongChoBangMutex = new Mutex();
 
-        protected virtual bool ThucHienCongViecTrenThietBi(string idThietBi, string url)
+        protected virtual bool ThucHienCongViecTrenThietBi(string idThietBi, string url, int indexInGThread)
         {
             var job = createScriptToRun(idThietBi, url);
             DeviceStatus status;
@@ -308,12 +307,12 @@ namespace Code.ViewModels
                 if (job.RunScript())
                 {
                     status.Status = DeviceStatus.TrangThai.THANH_CONG;
-                    TangThanhCong();
+                    TangThanhCong(indexInGThread);
                 }
                 else
                 {
                     status.Status = DeviceStatus.TrangThai.THAT_BAI;
-                    TangThatBai();
+                    TangThatBai(indexInGThread);
                 }
             }
             catch (AdbException ex)
@@ -321,13 +320,13 @@ namespace Code.ViewModels
                 status.Status = DeviceStatus.TrangThai.THAT_BAI;
                 job.OnTerminateOrPause();
                 Console.WriteLine(ex.Message);
-                TangThatBai();
+                TangThatBai(indexInGThread);
             }
             catch (Exception ex)
             {
                 status.Status = DeviceStatus.TrangThai.THAT_BAI;
                 job.OnTerminateOrPause();
-                TangThatBai();
+                TangThatBai(indexInGThread);
             }
             return true;
         }
