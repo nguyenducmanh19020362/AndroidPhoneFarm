@@ -38,7 +38,7 @@ namespace Code.Utils.Story
                 },
                 onCompleted = () =>
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                 }
             };
             var startYoutube = new BaseScriptComponent("Mở Youtube")
@@ -96,7 +96,7 @@ namespace Code.Utils.Story
             {
                 action = () =>
                 {
-                    var seconds = rand.Next(10) + 20;
+                    var seconds = rand.Next(3) + 4;
                     seconds = Math.Min(seconds, this.thoiGianXem - watchedTime + 1);
                     Thread.Sleep(seconds * 1000);
                     watchedTime += seconds;
@@ -131,21 +131,30 @@ namespace Code.Utils.Story
             {
                 var v = ViewUtils.findNode(view, (node) =>
                 {
-                    return "com.google.android.youtube:id/fullscreen_button" == node.Attributes["resource-id"].InnerText;
+                    return !node.HasChildNodes &&
+                        "com.google.android.youtube:id/watch_while_time_bar_view_overlay" == node.Attributes["resource-id"].InnerText;
                 }).FirstOrDefault();
                 return v != null;
             };
 
-            var waitForYoutubeStart = new BaseScriptComponent("Đợi Youtube khởi động", -1)
+            int maxWaitTime = 20;
+
+            var waitForYoutubeStart = new BaseScriptComponent("Đợi Youtube khởi động")
             {
                 init = () =>
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
+                    Console.WriteLine(maxWaitTime);
                 },
                 action = () =>
                 {
+                    --maxWaitTime;
                     view = adb.getCurrentView();
                 },
+                isError = () =>
+                {
+                    return maxWaitTime <= 0;
+                }
             };
 
             waitForYoutubeStart.AddNext(watchVideo, hasPlayVideo);
@@ -162,15 +171,13 @@ namespace Code.Utils.Story
             watchAction.AddNext(skipAds, hasAdsSkipButton);
             watchAction.AddNext(watchVideo);
 
-            onAdsCountdown.AddNext(skipAds, hasAdsSkipButton);
-            onAdsCountdown.AddNext(onAdsCountdown, hasAdsCountdown);
-            onAdsCountdown.AddNext(watchVideo);
+            onAdsCountdown.AddNext(watchAction);
 
-            watchVideo.AddNext(onAdsCountdown, hasAdsCountdown);
-            watchVideo.AddNext(skipAds, hasAdsSkipButton);
+            skipAds.AddNext(watchAction);
+
             watchVideo.AddNext(watchAction);
 
-            script.AddNext(stopAcivity.AddNext(startYoutube.AddNext(waitForYoutubeStart.AddNext(watchAction))));
+            script.AddNext(stopAcivity.AddNext(startYoutube.AddNext(waitForYoutubeStart)));
 
             isDone = script.RunScript();
         }

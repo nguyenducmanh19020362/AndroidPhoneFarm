@@ -2,6 +2,7 @@
 using Code.Utils.Story;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -103,7 +104,8 @@ namespace Code.ViewModels
             }
             foreach (var ac in DataProvider.Ins.db.TaiKhoanGoogles)
             {
-                if (tbs.Contains(ac.IDThietBi.Trim()) && ac.TrangThai == AccountStatus.CREATED)
+                if (tbs.Contains(ac.IDThietBi.Trim()))
+                    //&& ac.TrangThai == AccountStatus.CREATED)
                 {
                     emailOfDevice[ac.IDThietBi.Trim()].Add(ac.TenDangNhap);
                 }
@@ -173,6 +175,26 @@ namespace Code.ViewModels
         protected override string getCurrentUrl()
         {
             return DuongDan;
+        }
+
+        public ObservableCollection<JobProgress> jobProgress = new ObservableCollection<JobProgress>();
+        protected override void ExecuteStopAction(object obj)
+        {
+            base.ExecuteStopAction(obj);
+            this.jobProgress.Clear();
+        }
+
+        protected override void ThemCongViec(List<string> thietbi)
+        {
+            this.jobProgress.Add(new JobProgress(0, this._soLuotTang, this._duongDan));
+            base.ThemCongViec(thietbi);
+        }
+
+
+        protected override void TangThanhCong(int threadIndex)
+        {
+            base.TangThanhCong(threadIndex);
+            this.jobProgress[threadIndex].HT++;
         }
     }
 }

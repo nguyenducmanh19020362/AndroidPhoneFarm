@@ -28,6 +28,7 @@ namespace Code.Views.NenTang.Youtube
             InitializeComponent();
             this.DataContext = viewModel;
             deviceStatus.ItemsSource = viewModel.devices;
+            JobProgress.ItemsSource = viewModel.jobProgress;
         }
     }
 }

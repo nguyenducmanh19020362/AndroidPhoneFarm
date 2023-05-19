@@ -38,7 +38,7 @@ namespace Code.ViewModels
         private string _thoiLuong;
         private string _soLuotXem;
 
-        public ObservableCollection<JobProgress> JobProgress = new ObservableCollection<JobProgress>();
+        public ObservableCollection<JobProgress> jobProgress = new ObservableCollection<JobProgress>();
 
         public string DuongDan
         {
@@ -171,12 +171,12 @@ namespace Code.ViewModels
         protected override void ExecuteStopAction(object obj)
         {
             base.ExecuteStopAction(obj);
-            this.JobProgress.Clear();
+            this.jobProgress.Clear();
         }
 
         protected override void ThemCongViec(List<string> thietbi)
         {
-            this.JobProgress.Add(new JobProgress(0, this._soLuotCanTang, this._duongDan));
+            this.jobProgress.Add(new JobProgress(0, this._soLuotCanTang, this._duongDan));
             base.ThemCongViec(thietbi);
         }
 
@@ -184,7 +184,7 @@ namespace Code.ViewModels
         protected override void TangThanhCong(int threadIndex)
         {
             base.TangThanhCong(threadIndex);
-            this.JobProgress[threadIndex].HT++;
+            this.jobProgress[threadIndex].HT++;
         }
     }
 }
