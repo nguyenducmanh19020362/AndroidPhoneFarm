@@ -37,6 +37,17 @@
                                    Margin="0,15,10,0"/>
                     </StackPanel>
                 </RadioButton>
+                <RadioButton Style="{StaticResource mainButton}" x:Name="btnDeleteSelected" Click="btnDeleteSelected_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="Trash" Style="{StaticResource mainButtonIcon}" Foreground="Snow" />
+                        <TextBlock Text="Xóa tài khoản được chọn"
+                                   Foreground="{StaticResource titleColor2}"
+                                   FontSize="18"
+                                   FontFamily="Moutserrat"
+                                   FontWeight="Medium" Height="40"
+                                   Margin="0,15,10,0"/>
+                    </StackPanel>
+                </RadioButton>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1">

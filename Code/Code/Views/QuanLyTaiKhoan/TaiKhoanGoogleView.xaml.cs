@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,7 +26,9 @@ namespace Code.Views.QuanLyTaiKhoan
     {
         public ObservableCollection<ThongTinTaiKhoan> taiKhoans;
         private BackgroundWorker bk = new BackgroundWorker();
+        private BackgroundWorker removeItem = new BackgroundWorker();
         DbSet<TaiKhoanGoogle> objectList = null;
+
         public TaiKhoanGoogleView()
         {
             taiKhoans = new ObservableCollection<ThongTinTaiKhoan>();
@@ -40,6 +43,17 @@ namespace Code.Views.QuanLyTaiKhoan
                 Load();
             };
             bk.RunWorkerAsync();
+
+            removeItem.DoWork += (obj, e) =>
+            {
+                var items = (List<TaiKhoanGoogle>)e.Argument;
+                DataProvider.Ins.db.TaiKhoanGoogles.RemoveRange(items);
+                DataProvider.Ins.db.SaveChanges();
+            };
+            removeItem.RunWorkerCompleted += (obj, e) =>
+            {
+                MessageBox.Show("Xóa thành công");
+            };
         }
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
@@ -49,18 +63,69 @@ namespace Code.Views.QuanLyTaiKhoan
 
         private void btnDeleteError_Click(object sender, RoutedEventArgs e)
         {
-            var objectList = DataProvider.Ins.db.TaiKhoanGoogles;
+            var selectSet = new HashSet<int>();
+            var items = new List<TaiKhoanGoogle>();
             foreach (var item in objectList)
             {
                 if (AccountStatus.IsError(item.TrangThai))
                 {
-                    DataProvider.Ins.db.TaiKhoanGoogles.Remove(item);
+                    items.Add(item);
+                    selectSet.Add(item.IDTaiKhoanG);
                 }
             }
-            DataProvider.Ins.db.SaveChanges();
-            MessageBox.Show("Xóa thành công");
-            bk.RunWorkerAsync();
+            var rItems = new List<ThongTinTaiKhoan>();
+            foreach (var tk in taiKhoans)
+            {
+                if (selectSet.Contains(tk.ID))
+                {
+                    rItems.Add(tk);
+                }
+            }
+            foreach (var item in rItems)
+            {
+                taiKhoans.Remove(item);
+            }
+            removeItem.RunWorkerAsync(items);
         }
+
+        private void btnDeleteSelected_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Bạn có chắc muốn xóa các bản ghi đã được chọn?",
+                                          "Xóa bản ghi",
+                                          MessageBoxButton.YesNo,
+                                          MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                removeSelectItem();
+            }
+        }
+        
+        private void removeSelectItem()
+        {
+            var selectSet = new HashSet<int>();
+            var rItems = new List<ThongTinTaiKhoan>();
+            foreach (ThongTinTaiKhoan item in dgTaiKhoan.SelectedItems)
+            {
+                rItems.Add(item);
+                selectSet.Add(item.ID);
+            }
+            foreach (var item in rItems)
+            {
+                taiKhoans.Remove(item);
+            }
+
+            var items = new List<TaiKhoanGoogle>();
+            foreach (var tk in objectList)
+            {
+                if (selectSet.Contains(tk.IDTaiKhoanG))
+                {
+                    items.Add(tk);
+                }
+            }
+
+            removeItem.RunWorkerAsync(items);
+        }
+
         private void Load()
         {
             taiKhoans.Clear();
@@ -68,6 +133,7 @@ namespace Code.Views.QuanLyTaiKhoan
             foreach (var item in objectList)
             {
                 ThongTinTaiKhoan taiKhoan = new ThongTinTaiKhoan();
+                taiKhoan.ID = item.IDTaiKhoanG;
                 taiKhoan.STT = stt++;
                 taiKhoan.TenDangNhap = item.TenDangNhap;
                 taiKhoan.MatKhau = item.MatKhau;

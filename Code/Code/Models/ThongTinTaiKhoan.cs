@@ -8,6 +8,7 @@ namespace Code.Models
 {
     public class ThongTinTaiKhoan
     {
+        public int ID { get; set; }
         public int STT { get; set; }
         public string TenDangNhap { get; set;}
         public string MatKhau { get; set;}

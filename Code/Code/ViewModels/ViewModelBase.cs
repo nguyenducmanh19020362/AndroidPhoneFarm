@@ -123,7 +123,7 @@ namespace Code.ViewModels
         {
             thietBi = ThietBi.GetInstance();
             ShowPopUpWindowCommand = new ViewModelCommand(ExecuteShowPopUpWindow);
-            StopAction = new ViewModelCommand(ExecuteStopAction);
+            StopAction = new ViewModelCommand(StopActionAndDeleteStatus);
         }
 
         protected PopupChonThietBiView popupChonThietBiView;
@@ -352,6 +352,18 @@ namespace Code.ViewModels
                 str.Append(allowChars[index]);
             }
             return str.ToString();
+        }
+
+        private void StopActionAndDeleteStatus(object obj)
+        {
+            MessageBoxResult result = MessageBox.Show("Bạn có chắc muốn dừng tất cả các công việc đang thực thi (nếu có) ?",
+                                            "Dừng hành động",
+                                            MessageBoxButton.YesNo,
+                                            MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                ExecuteStopAction(obj);
+            }
         }
     }
 }

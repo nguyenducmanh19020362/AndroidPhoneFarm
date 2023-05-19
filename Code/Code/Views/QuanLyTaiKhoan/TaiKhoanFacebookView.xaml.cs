@@ -41,6 +41,17 @@ namespace Code.Views.QuanLyTaiKhoan
                 Load();
             };
             bk.RunWorkerAsync();
+
+            removeItem.DoWork += (obj, e) =>
+            {
+                var items = (List<TaiKhoanGoogle>)e.Argument;
+                DataProvider.Ins.db.TaiKhoanGoogles.RemoveRange(items);
+                DataProvider.Ins.db.SaveChanges();
+            };
+            removeItem.RunWorkerCompleted += (obj, e) =>
+            {
+                MessageBox.Show("Xóa thành công");
+            };
         }
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
@@ -50,17 +61,29 @@ namespace Code.Views.QuanLyTaiKhoan
 
         private void btnDeleteError_Click(object sender, RoutedEventArgs e)
         {
-            var objectList = DataProvider.Ins.db.TaiKhoanFacebooks;
+            var selectSet = new HashSet<int>();
+            var items = new List<TaiKhoanFacebook>();
             foreach (var item in objectList)
             {
                 if (AccountStatus.IsError(item.TrangThai))
                 {
-                    DataProvider.Ins.db.TaiKhoanFacebooks.Remove(item);
+                    items.Add(item);
+                    selectSet.Add(item.IDTaiKhoanF);
                 }
             }
-            DataProvider.Ins.db.SaveChanges();
-            MessageBox.Show("Xóa thành công");
-            bk.RunWorkerAsync();
+            var rItems = new List<ThongTinTaiKhoan>();
+            foreach (var tk in taiKhoans)
+            {
+                if (selectSet.Contains(tk.ID))
+                {
+                    rItems.Add(tk);
+                }
+            }
+            foreach (var item in rItems)
+            {
+                taiKhoans.Remove(item);
+            }
+            removeItem.RunWorkerAsync(items);
         }
         private void Load()
         {
@@ -69,6 +92,7 @@ namespace Code.Views.QuanLyTaiKhoan
             foreach (var item in objectList)
             {
                 ThongTinTaiKhoan taiKhoan = new ThongTinTaiKhoan();
+                taiKhoan.ID = item.IDTaiKhoanF;
                 taiKhoan.STT = stt++;
                 taiKhoan.TenDangNhap = item.TenDangNhap;
                 taiKhoan.MatKhau = item.MatKhau;
@@ -80,6 +104,45 @@ namespace Code.Views.QuanLyTaiKhoan
                 taiKhoans.Add(taiKhoan);
             }
             dgTaiKhoan.ItemsSource = taiKhoans;
+        }
+
+        private void btnDeleteSelected_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Bạn có chắc muốn xóa các bản ghi đã được chọn?",
+                                          "Xóa bản ghi",
+                                          MessageBoxButton.YesNo,
+                                          MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                removeSelectItem();
+            }
+        }
+
+        private BackgroundWorker removeItem = new BackgroundWorker();
+        private void removeSelectItem()
+        {
+            var selectSet = new HashSet<int>();
+            var rItems = new List<ThongTinTaiKhoan>();
+            foreach (ThongTinTaiKhoan item in dgTaiKhoan.SelectedItems)
+            {
+                rItems.Add(item);
+                selectSet.Add(item.ID);
+            }
+            foreach (var item in rItems)
+            {
+                taiKhoans.Remove(item);
+            }
+
+            var items = new List<TaiKhoanFacebook>();
+            foreach (var tk in objectList)
+            {
+                if (selectSet.Contains(tk.IDTaiKhoanF))
+                {
+                    items.Add(tk);
+                }
+            }
+
+            removeItem.RunWorkerAsync(items);
         }
     }
 }
