@@ -166,7 +166,7 @@ namespace Code.Utils.Story
             {
                 init = () =>
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(10000);
                     startTime = DateTime.UtcNow;
                 },
                 canAction = () =>
@@ -185,6 +185,7 @@ namespace Code.Utils.Story
                         var x = b.x + b.h / 2;
                         var y = b.y + b.w / 2;
                         adb.tap(x, y);
+                        Thread.Sleep(2000);
                     }
                 },
                 isError = () =>

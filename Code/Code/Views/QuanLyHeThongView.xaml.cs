@@ -93,7 +93,7 @@ namespace Code.Views
                 }
                 else
                 {
-                    LoadChart("Tat ca");
+                    LoadChart("Tất cả");
                 }
 
             };
@@ -131,7 +131,7 @@ namespace Code.Views
                 else
                 {
                     ThongTinThietBi newThietBi = new ThongTinThietBi();
-                    newThietBi.SoThuTu = listItems.Count;
+                    newThietBi.SoThuTu = listItems.Count+1;
                     newThietBi.MaThietBi = item.IDThietBi;
                     if (item.TrangThai == 1)
                     {
@@ -167,7 +167,7 @@ namespace Code.Views
                 else
                 {
                     ThongTinThietBi newThietBi = new ThongTinThietBi();
-                    newThietBi.SoThuTu = listItems.Count;
+                    newThietBi.SoThuTu = listItems.Count+1;
                     newThietBi.MaThietBi = item.IDThietBi.Trim();
                     if (item.TrangThai == 1)
                     {
@@ -186,7 +186,8 @@ namespace Code.Views
             }
 
             var allItems = new ThongTinThietBi();
-            allItems.MaThietBi = "Tat ca";
+            allItems.SoThuTu = 0;
+            allItems.MaThietBi = "Tất cả";
             allItems.SoTaiKhoanYoutubeTB = TKYoutubeTB;
             allItems.SoTaiKhoanYoutubeTC = TKYoutubeTC;
             allItems.SoTaiKhoanFacebookTC = TKFacebookTC;
@@ -263,7 +264,7 @@ namespace Code.Views
             TextChart.Foreground = new SolidColorBrush(Colors.Black);
             Header.Visibility = Visibility.Collapsed;
             hethong.Visibility = Visibility.Collapsed;
-            LoadChart("Tat ca");
+            LoadChart("Tất cả");
             Chart.Visibility = Visibility.Visible;
         }
 

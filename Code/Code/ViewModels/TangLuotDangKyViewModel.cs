@@ -181,7 +181,16 @@ namespace Code.ViewModels
             base.ThemCongViec(thietbi);
         }
 
-
+        protected override BaseScript createScriptToRun(string thietbiId, string url)
+        {
+            var email = emailOfDevice[thietbiId].LastOrDefault();
+            if (email == null)
+            {
+                return null;
+            }
+            emailOfDevice[thietbiId].RemoveAt(emailOfDevice[thietbiId].Count() - 1);
+            return new DangKyKenhYoutubeScript(thietbiId, url, email);
+        }
         protected override void TangThanhCong(int threadIndex)
         {
             base.TangThanhCong(threadIndex);

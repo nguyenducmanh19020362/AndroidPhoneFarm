@@ -372,3 +372,9 @@ D:\STP_PROJ\Code\Code\bin\Debug\LiveCharts.dll
 D:\STP_PROJ\Code\Code\bin\Debug\LiveCharts.Wpf.dll
 D:\STP_PROJ\Code\Code\bin\Debug\LiveCharts.xml
 D:\STP_PROJ\Code\Code\bin\Debug\LiveCharts.Wpf.xml
+D:\CongTy\AndroidPhoneFarm\Code\Code\bin\Debug\LiveCharts.dll
+D:\CongTy\AndroidPhoneFarm\Code\Code\bin\Debug\LiveCharts.Wpf.dll
+D:\CongTy\AndroidPhoneFarm\Code\Code\bin\Debug\LiveCharts.pdb
+D:\CongTy\AndroidPhoneFarm\Code\Code\bin\Debug\LiveCharts.xml
+D:\CongTy\AndroidPhoneFarm\Code\Code\bin\Debug\LiveCharts.Wpf.pdb
+D:\CongTy\AndroidPhoneFarm\Code\Code\bin\Debug\LiveCharts.Wpf.xml
