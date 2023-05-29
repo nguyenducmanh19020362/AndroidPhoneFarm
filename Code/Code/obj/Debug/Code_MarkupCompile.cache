@@ -4,16 +4,16 @@
 exe
 C#
 .cs
-D:\temp\tmp\AndroidPhoneFarm\Code\Code\obj\Debug\
+D:\STP_PROJ\Code\Code\obj\Debug\
 Code
 none
 false
 DEBUG;TRACE
-D:\temp\tmp\AndroidPhoneFarm\Code\Code\App.xaml
+D:\STP_PROJ\Code\Code\App.xaml
 14-1336114679
 4435109337
-491862629451
-33-1065996688
+51-225946810
+351909453349
 Styles\ButtonStyles.xaml;Styles\DatagridStyles.xaml;Styles\UIColors.xaml;Views\MainView.xaml;Views\NenTang\Facebook\TangLuotTheoDoiView.xaml;Views\NenTang\Facebook\TaoTaiKhoanFacebookView.xaml;Views\NenTang\Google\TaoTaiKhoanGoogleView.xaml;Views\NenTang\Youtube\TangLuotDangKyView.xaml;Views\NenTang\Youtube\TangLuotXemView.xaml;Views\PopupChonThietBiView.xaml;Views\QuanLyHeThongView.xaml;Views\QuanLyTaiKhoan\TaiKhoanFacebookView.xaml;Views\QuanLyTaiKhoan\TaiKhoanGoogleView.xaml;Views\QuanLyThietBiView.xaml;
 
 False

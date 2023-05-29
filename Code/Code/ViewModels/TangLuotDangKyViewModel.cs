@@ -26,6 +26,7 @@ namespace Code.ViewModels
             }
             return INSTANCE;
         }
+
         private string _duongDan;
         private int _soLuotTang;
         private string _trangThai;
@@ -161,16 +162,7 @@ namespace Code.ViewModels
 
         private Dictionary<String, List<String>> emailOfDevice = new Dictionary<string, List<string>>();
 
-        protected override BaseScript createScriptToRun(string thietbiId, string url)
-        {
-            var email = emailOfDevice[thietbiId].LastOrDefault();
-            if (email == null)
-            {
-                return null;
-            }
-            emailOfDevice[thietbiId].RemoveAt(emailOfDevice[thietbiId].Count() - 1);
-            return new DangKyKenhYoutubeScript(thietbiId, url, email);
-        }
+         
         protected override string getCurrentUrl()
         {
             return DuongDan;

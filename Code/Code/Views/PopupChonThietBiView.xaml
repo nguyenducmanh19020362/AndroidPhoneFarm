@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         Background="Transparent"
-        AllowsTransparency="True">
+        AllowsTransparency="True" MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <Border CornerRadius="10"                    
         BorderThickness="1">
         <Border.Background>

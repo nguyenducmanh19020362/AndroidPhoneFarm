@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Code.ViewModels
 {
-    public class QuanLyHeThongViewModel:ViewModelBase
+    public class ThongTinThietBi : ViewModelBase
     {
         private int _SoThuTu { get; set; }
         private string _MaThietBi { get; set; }
@@ -45,7 +45,8 @@ namespace Code.ViewModels
             get { return _SoTaiKhoanYoutubeTB; }
             set { _SoTaiKhoanYoutubeTB = value; }
         }
-        public QuanLyHeThongViewModel() { 
+        public ThongTinThietBi()
+        {
 
         }
     }

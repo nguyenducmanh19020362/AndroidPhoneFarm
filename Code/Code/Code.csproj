@@ -65,6 +65,12 @@
     <Reference Include="FontAwesome.Sharp, Version=6.3.0.0, Culture=neutral, PublicKeyToken=d16d1e4e568ec10f, processorArchitecture=MSIL">
       <HintPath>..\packages\FontAwesome.Sharp.6.3.0\lib\net472\FontAwesome.Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -157,6 +163,7 @@
     <Compile Include="Utils\Story\SwitchToYoutubeAccountByEmail.cs" />
     <Compile Include="Utils\Story\TakeFacebookCode.cs" />
     <Compile Include="Utils\Story\TakeLatestEmail.cs" />
+    <Compile Include="Utils\Story\TangLuotTheoDoi.cs" />
     <Compile Include="Utils\Story\TaoTaiKhoanFacebook.cs" />
     <Compile Include="Utils\Story\XemVideoYoutubeScript.cs" />
     <Compile Include="Utils\ViewUtils.cs" />
@@ -171,6 +178,7 @@
     <Compile Include="ViewModels\TangLuotXemViewModel.cs" />
     <Compile Include="ViewModels\TaoTaiKhoanFacebookViewModel.cs" />
     <Compile Include="ViewModels\TaoTaiKhoanGoogleViewModel.cs" />
+    <Compile Include="ViewModels\ThongTinThietBi.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\ViewModelCommand.cs" />
     <Compile Include="App.xaml.cs">
